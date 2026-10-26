@@ -13,8 +13,22 @@
     const minutesElement = document.querySelector('[data-countdown-minutes]');
     const secondsElement = document.querySelector('[data-countdown-seconds]');
 
+    const animate = typeof window.gsap !== 'undefined' && !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
     function pad(value) {
         return String(value).padStart(2, '0');
+    }
+
+    function setValue(element, value) {
+        if (!element || element.textContent === value) {
+            return;
+        }
+
+        element.textContent = value;
+
+        if (animate) {
+            gsap.fromTo(element, { scale: 0.85, opacity: 0.4 }, { scale: 1, opacity: 1, duration: 0.35, ease: 'back.out(2)' });
+        }
     }
 
     function updateCountdown() {
@@ -32,21 +46,10 @@
         const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
         const seconds = Math.floor((difference % (1000 * 60)) / 1000);
 
-        if (daysElement) {
-            daysElement.textContent = pad(days);
-        }
-
-        if (hoursElement) {
-            hoursElement.textContent = pad(hours);
-        }
-
-        if (minutesElement) {
-            minutesElement.textContent = pad(minutes);
-        }
-
-        if (secondsElement) {
-            secondsElement.textContent = pad(seconds);
-        }
+        setValue(daysElement, pad(days));
+        setValue(hoursElement, pad(hours));
+        setValue(minutesElement, pad(minutes));
+        setValue(secondsElement, pad(seconds));
     }
 
     const intervalId = window.setInterval(updateCountdown, 1000);

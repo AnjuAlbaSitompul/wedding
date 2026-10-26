@@ -6,8 +6,10 @@
     $second = $order === 'bride_first' ? $groom : $bride;
 @endphp
 
-<section id="scene-couple-intro" class="wedding-section">
-    <div class="text-center">
+<section id="scene-couple-intro" class="wedding-section overflow-hidden">
+    <x-ui.floral-corners />
+
+    <div class="relative z-10 text-center">
         <p class="font-heading text-xl md:text-3xl text-wedding-deep/70 tracking-[0.3em] uppercase mb-6 reveal">
             The Wedding Of
         </p>
@@ -18,7 +20,7 @@
             <h2 class="font-script text-6xl md:text-8xl text-wedding-deep reveal">{{ $second['nickname'] }}</h2>
         </div>
 
-        <div class="wedding-divider"><i class="fa-solid fa-ring"></i></div>
+        <x-ui.section-divider />
 
         <p class="font-elegant text-lg md:text-xl text-wedding-deep/60 reveal">{{ $first['full_name'] }} &amp; {{ $second['full_name'] }}</p>
     </div>

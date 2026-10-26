@@ -1,29 +1,23 @@
 @extends('layouts.app')
 
-@section('content')
-@if (! session()->has('invitation_opened'))
-        <div id="entry-overlay" class="entry-overlay">
-            <div class="text-center px-6">
-                <!-- Lottie envelope animation container -->
-                <div id="envelope-lottie" class="w-48 h-48 mx-auto mb-6"></div>
-                <p class="font-elegant text-xl text-wedding-deep mb-2">Undangan Pernikahan</p>
-                <p class="font-script text-5xl text-wedding-deep mb-4">Dani & Desi</p>
-                <p class="font-heading text-sm text-wedding-deep/70 mb-8">Klik untuk membuka undangan</p>
-                <i class="fa-solid fa-chevron-down text-2xl text-wedding-blue animate-bounce"></i>
-            </div>
-        </div>
-    @endif
+@push('preload')
+    <link rel="preload" as="image" href="{{ asset('images/forest/sky.webp') }}" fetchpriority="high">
+    <link rel="preload" as="image" href="{{ asset('images/envelope/paper.webp') }}">
+    <link rel="preload" as="image" href="{{ asset('images/envelope/wax-seal.webp') }}">
+    <link rel="preload" as="image" href="{{ asset('images/envelope/flowers.webp') }}">
+@endpush
 
-    <audio id="bg-music" loop preload="auto">
+@section('content')
+    <x-sections.envelope :guest-name="$guestName" />
+
+    <audio id="bg-music" loop preload="none">
         <source src="{{ asset('audio/background.mp3') }}" type="audio/mpeg">
     </audio>
 
     <x-decorations.music-toggle />
 
-    <x-decorations.flying-birds />
     <x-decorations.falling-leaves />
     <x-decorations.floating-particles />
-    <x-decorations.light-rays />
 
     <main>
         <x-sections.opening-forest />

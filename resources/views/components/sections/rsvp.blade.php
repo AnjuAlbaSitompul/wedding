@@ -1,12 +1,14 @@
 @props(['rsvps' => collect()])
 
-<section id="scene-rsvp" class="wedding-section">
-    <div class="text-center mb-8">
-        <h3 class="font-heading text-3xl md:text-4xl text-wedding-deep reveal">RSVP &amp; Ucapan</h3>
+<section id="scene-rsvp" class="wedding-section overflow-hidden paper-texture">
+    <x-ui.floral-corners />
+
+    <div class="relative z-10 text-center mb-8">
+        <h3 class="section-title font-heading text-3xl md:text-4xl text-wedding-deep reveal">RSVP &amp; Ucapan</h3>
         <p class="font-elegant text-lg text-wedding-deep/60 mt-2 reveal">Konfirmasi kehadiran dan kirim doa terbaik Anda</p>
     </div>
 
-    <div class="grid lg:grid-cols-2 gap-6 max-w-5xl w-full">
+    <div class="relative z-10 grid lg:grid-cols-2 gap-6 max-w-5xl w-full">
         <form id="rsvp-form" method="POST" action="{{ route('rsvp.store') }}" class="wedding-card reveal" novalidate>
             <div class="space-y-4">
                 <div>
@@ -47,7 +49,7 @@
                 <p id="rsvp-success" class="hidden text-sm text-green-700 font-body">Terima kasih, ucapan Anda telah terkirim.</p>
 
                 <button type="submit"
-                        class="w-full rounded-full bg-wedding-deep px-6 py-3 font-heading text-sm text-white transition hover:bg-[#0D47A1]">
+                        class="btn-wedding w-full bg-wedding-deep text-white hover:bg-wedding-navy">
                     Kirim Ucapan
                 </button>
             </div>

@@ -34,52 +34,52 @@
 
     function initEntryOverlay() {
         const overlay = document.getElementById('entry-overlay');
-        const envelopeLottie = document.getElementById('envelope-lottie');
-        let envelopeAnimation = null;
+        const envelope = document.getElementById('envelope');
 
-        if (!overlay) {
+        if (!overlay || !envelope) {
             return;
         }
 
         document.body.classList.add('no-scroll');
+        window.weddingLenis?.stop();
 
-        // Initialize Lottie (paused initially)
-        if (envelopeLottie && window.lottie) {
-            envelopeAnimation = lottie.loadAnimation({
-                container: envelopeLottie,
-                renderer: 'svg',
-                loop: false,
-                autoplay: false,
-                path: '/lottie/envelope-open.json'
-            });
-        }
+        const hasGsap = typeof window.gsap !== 'undefined';
+        const reduced = !hasGsap || window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        const idle = reduced ? null : gsap.to(envelope, { y: -10, duration: 2, yoyo: true, repeat: -1, ease: 'sine.inOut' });
 
-        overlay.addEventListener('click', () => {
-            playMusic();
+        const finish = () => {
+            overlay.remove();
             document.body.classList.remove('no-scroll');
+            window.weddingLenis?.start();
+            window.ScrollTrigger?.refresh();
+            window.invitationOpened = true;
+            window.dispatchEvent(new Event('invitation:opened'));
+        };
 
-            // Play envelope animation
-            if (envelopeAnimation) {
-                envelopeAnimation.goToAndPlay(0, true);
+        // <button> fires click on Enter/Space, so keyboard users are covered too.
+        envelope.addEventListener('click', () => {
+            playMusic();
+            idle?.kill();
 
-                // Wait for animation to complete, then fade overlay
-                envelopeAnimation.addEventListener('complete', () => {
-                    fadeOutOverlay();
-                });
-            } else {
-                fadeOutOverlay();
+            if (reduced) {
+                overlay.style.transition = 'opacity 0.4s ease';
+                overlay.style.opacity = '0';
+                window.setTimeout(finish, 400);
+
+                return;
             }
-        }, { once: true });
 
-        function fadeOutOverlay() {
-            overlay.style.transition = 'opacity 0.8s ease';
-            overlay.style.opacity = '0';
-            window.setTimeout(() => {
-                overlay.remove();
-                window.weddingLenis?.start();
-                window.dispatchEvent(new Event('resize'));
-            }, 800);
-        }
+            gsap.timeline({ onComplete: finish })
+                .to('.envelope-hint, .envelope-caption', { opacity: 0, duration: 0.25 })
+                .to('.envelope-seal', { scale: 1.3, opacity: 0, duration: 0.4, ease: 'back.in(2)' }, '<')
+                .to('.envelope-flap', { rotateX: -180, duration: 0.8, ease: 'power2.inOut' }, '-=0.1')
+                .set('.envelope-flap', { zIndex: 1 })
+                .to('.envelope-flowers', { opacity: 0, y: 30, duration: 0.5 }, '<')
+                .to('.envelope-card', { yPercent: -60, duration: 0.9, ease: 'power3.out' })
+                .to('.envelope-card', { scale: 1.6, duration: 0.6, ease: 'power2.in' })
+                .to('.envelope-back, .envelope-front, .envelope-flap', { y: 120, opacity: 0, duration: 0.6, ease: 'power2.in' }, '<')
+                .to(overlay, { opacity: 0, duration: 0.5 }, '-=0.3');
+        }, { once: true });
     }
 
     function initMusicToggle() {

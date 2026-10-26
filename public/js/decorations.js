@@ -7,13 +7,14 @@
         return;
     }
 
-    const leafColors = ['#90CAF9', '#BBDEFB', '#E3F2FD', '#FFFFFF', '#E8EAF6'];
+    const isSmallScreen = window.innerWidth < 768;
+    const scenes = [];
 
     function createCanvasScene(canvasId, options) {
         const canvas = document.getElementById(canvasId);
 
         if (!canvas) {
-            return null;
+            return;
         }
 
         const context = canvas.getContext('2d');
@@ -33,72 +34,104 @@
             particles = Array.from({ length: options.count }, () => options.create(width, height));
         }
 
-        function draw() {
-            context.clearRect(0, 0, width, height);
+        resize();
+        window.addEventListener('resize', resize);
 
+        scenes.push(() => {
+            context.clearRect(0, 0, width, height);
             particles.forEach((particle) => {
                 options.update(particle, width, height);
                 options.render(context, particle);
             });
-
-            window.requestAnimationFrame(draw);
-        }
-
-        resize();
-        window.addEventListener('resize', resize);
-        draw();
-
-        return canvas;
+        });
     }
 
-    createCanvasScene('leaves-canvas', {
-        count: 18,
-        create: (width, height) => ({
-            x: Math.random() * width,
-            y: Math.random() * -height,
-            size: 6 + Math.random() * 8,
-            speedY: 0.4 + Math.random() * 0.9,
-            speedX: -0.4 + Math.random() * 0.8,
-            rotation: Math.random() * Math.PI * 2,
-            rotationSpeed: (-0.02 + Math.random() * 0.04) || 0.01,
-            sway: Math.random() * Math.PI * 2,
-            color: leafColors[Math.floor(Math.random() * leafColors.length)],
-            height: height,
-        }),
-        update: (particle, width, height) => {
-            particle.sway += 0.01;
-            particle.y += particle.speedY;
-            particle.x += particle.speedX + Math.sin(particle.sway) * 0.4;
-            particle.rotation += particle.rotationSpeed;
+    // One shared loop, paused while the tab is hidden (saves battery on phones).
+    let frameId = null;
 
-            if (particle.y > height + 20) {
-                particle.y = -20;
-                particle.x = Math.random() * width;
-            }
+    function loop() {
+        scenes.forEach((draw) => draw());
+        frameId = window.requestAnimationFrame(loop);
+    }
 
-            if (particle.x < -20) {
-                particle.x = width + 20;
-            }
+    function start() {
+        if (frameId === null && !document.hidden) {
+            frameId = window.requestAnimationFrame(loop);
+        }
+    }
 
-            if (particle.x > width + 20) {
-                particle.x = -20;
-            }
-        },
-        render: (context, particle) => {
-            context.save();
-            context.translate(particle.x, particle.y);
-            context.rotate(particle.rotation);
-            context.fillStyle = particle.color;
-            context.globalAlpha = 0.75;
-            context.beginPath();
-            context.ellipse(0, 0, particle.size / 2, particle.size, 0, 0, Math.PI * 2);
-            context.fill();
-            context.restore();
-        },
+    document.addEventListener('visibilitychange', () => {
+        if (document.hidden && frameId !== null) {
+            window.cancelAnimationFrame(frameId);
+            frameId = null;
+        } else {
+            start();
+        }
+    });
+
+    function loadImages(sources) {
+        return Promise.all(sources.map((src) => new Promise((resolve) => {
+            const image = new Image();
+            image.onload = () => resolve(image);
+            image.onerror = () => resolve(null);
+            image.src = src;
+        }))).then((images) => images.filter(Boolean));
+    }
+
+    loadImages([1, 2, 3, 4].map((n) => '/images/leaves/leaf-' + n + '.webp')).then((leaves) => {
+        if (leaves.length) {
+            createCanvasScene('leaves-canvas', {
+                count: isSmallScreen ? 12 : 18,
+                create: (width, height) => ({
+                    x: Math.random() * width,
+                    y: Math.random() * -height,
+                    size: 14 + Math.random() * 14,
+                    speedY: 0.4 + Math.random() * 0.8,
+                    speedX: -0.4 + Math.random() * 0.8,
+                    rotation: Math.random() * Math.PI * 2,
+                    rotationSpeed: (-0.02 + Math.random() * 0.04) || 0.01,
+                    sway: Math.random() * Math.PI * 2,
+                    image: leaves[Math.floor(Math.random() * leaves.length)],
+                }),
+                update: (particle, width, height) => {
+                    particle.sway += 0.01;
+                    particle.y += particle.speedY;
+                    particle.x += particle.speedX + Math.sin(particle.sway) * 0.4;
+                    particle.rotation += particle.rotationSpeed;
+
+                    if (particle.y > height + 30) {
+                        particle.y = -30;
+                        particle.x = Math.random() * width;
+                    }
+
+                    if (particle.x < -30) {
+                        particle.x = width + 30;
+                    }
+
+                    if (particle.x > width + 30) {
+                        particle.x = -30;
+                    }
+                },
+                render: (context, particle) => {
+                    const image = particle.image;
+                    const h = particle.size;
+                    const w = h * (image.width / image.height);
+
+                    context.save();
+                    context.translate(particle.x, particle.y);
+                    context.rotate(particle.rotation);
+                    context.globalAlpha = 0.8;
+                    context.drawImage(image, -w / 2, -h / 2, w, h);
+                    context.restore();
+                },
+            });
+        }
+
+        start();
     });
 
     createCanvasScene('particles-canvas', {
-        count: 30,
+        count: isSmallScreen ? 18 : 30,
         create: (width, height) => ({
             x: Math.random() * width,
             y: Math.random() * height,

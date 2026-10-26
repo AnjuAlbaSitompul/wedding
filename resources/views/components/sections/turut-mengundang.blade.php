@@ -1,7 +1,7 @@
 <section id="scene-turut-mengundang" class="wedding-section">
     <div class="text-center mb-8">
-        <h3 class="font-heading text-3xl md:text-4xl text-wedding-deep reveal">Turut Mengundang</h3>
-        <div class="wedding-divider"><i class="fa-solid fa-leaf"></i></div>
+        <h3 class="section-title font-heading text-3xl md:text-4xl text-wedding-deep reveal">Turut Mengundang</h3>
+        <x-ui.section-divider />
     </div>
 
     <div class="wedding-card max-w-md w-full stagger-children">

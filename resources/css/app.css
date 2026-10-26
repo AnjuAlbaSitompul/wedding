@@ -46,7 +46,22 @@
     }
 
     .wedding-card {
-        @apply bg-white/80 backdrop-blur-md rounded-2xl shadow-card border border-white/50 p-8;
+        @apply bg-white/80 backdrop-blur-md rounded-2xl shadow-card border border-wedding-gold/40 p-8;
+    }
+
+    .section-title {
+        @apply relative inline-block pb-3;
+    }
+
+    .section-title::after {
+        content: '';
+        position: absolute;
+        left: 50%;
+        bottom: 0;
+        width: 56px;
+        height: 1px;
+        translate: -50% 0;
+        background: linear-gradient(90deg, transparent, var(--color-wedding-gold), transparent);
     }
 
     .wedding-divider {
@@ -59,7 +74,7 @@
     }
 
     .title-gradient {
-        background-image: linear-gradient(180deg, #FFFFFF 0%, var(--color-wedding-deep) 100%);
+        background-image: linear-gradient(180deg, var(--color-wedding-navy) 0%, var(--color-wedding-deep) 62%, color-mix(in srgb, var(--color-wedding-gold) 70%, var(--color-wedding-deep)) 100%);
         -webkit-background-clip: text;
         background-clip: text;
         -webkit-text-fill-color: transparent;
@@ -76,72 +91,180 @@
     }
 }
 
-@keyframes flyAcross {
-    0%   { transform: translateX(-10vw) translateY(0); }
-    50%  { transform: translateX(50vw) translateY(-30px); }
-    100% { transform: translateX(110vw) translateY(0); }
-}
-
-.bird {
-    position: fixed;
-    animation: flyAcross 15s linear infinite;
-    z-index: 30;
-    pointer-events: none;
-}
-
-@keyframes fall {
-    0%   { transform: translateY(-10vh) rotate(0deg); opacity: 0.8; }
-    100% { transform: translateY(110vh) rotate(360deg); opacity: 0; }
-}
-
-.leaf-particle {
-    position: fixed;
-    top: -10vh;
-    animation: fall linear infinite;
-    z-index: 25;
-    pointer-events: none;
-}
-
-@keyframes twinkle {
-    0%, 100% { opacity: 0.2; transform: scale(0.8); }
-    50%      { opacity: 1; transform: scale(1.2); }
-}
-
-.firefly {
-    position: fixed;
-    animation: twinkle 3s ease-in-out infinite;
-    z-index: 20;
-    pointer-events: none;
-}
-
-@keyframes lightRay {
-    0%, 100% { opacity: 0.3; }
-    50%      { opacity: 0.6; }
-}
-
-.light-ray {
-    position: fixed;
+/* ---------- Bird sprite: 8 frames @ 128x128 in one row (images/birds/dove-sprite.webp) ---------- */
+.bird-flyer {
+    position: absolute;
     top: 0;
-    width: 200px;
-    height: 100vh;
-    background: linear-gradient(to bottom, rgba(255, 255, 255, 0.4), transparent);
-    transform: skewX(-15deg);
-    animation: lightRay 8s ease-in-out infinite;
-    z-index: 15;
+    left: 0;
     pointer-events: none;
+    will-change: transform, opacity;
 }
 
+.sprite-bird {
+    display: block;
+    width: 100%;
+    aspect-ratio: 1;
+    background: url('/images/birds/dove-sprite.webp') 0 0 / 800% 100% no-repeat;
+    /* jump-none: 8 steps land exactly on the 8 frames (0%, 1/7 ... 100%) */
+    animation: bird-flap 0.6s steps(8, jump-none) infinite;
+}
+
+@keyframes bird-flap {
+    to { background-position: 100% 0; }
+}
+
+/* ---------- Entry envelope ---------- */
 .entry-overlay {
     position: fixed;
     inset: 0;
     z-index: 100;
-    background: linear-gradient(135deg, #E3F2FD, #FFFFFF);
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
-    flex-direction: column;
-    text-align: center;
+    overflow: hidden;
+    background: var(--color-wedding-sky);
+}
+
+.envelope {
+    position: relative;
+    z-index: 10;
+    width: min(82vw, 380px);
+    aspect-ratio: 3 / 2;
+    perspective: 1200px;
     cursor: pointer;
+    border: 0;
+    padding: 0;
+    background: none;
+}
+
+.envelope:focus-visible {
+    outline: 2px solid var(--color-wedding-gold);
+    outline-offset: 8px;
+}
+
+.envelope-back,
+.envelope-front,
+.envelope-flap {
+    position: absolute;
+    inset: 0;
+    background: url('/images/envelope/paper.webp') center / 320px auto, #F5F9FF;
+}
+
+.envelope-back {
+    border-radius: 6px;
+    box-shadow: var(--shadow-card), 0 0 0 1px color-mix(in srgb, var(--color-wedding-gold) 35%, transparent);
+}
+
+.envelope-front {
+    z-index: 3;
+    border-radius: 0 0 6px 6px;
+    clip-path: polygon(0 0, 50% 55%, 100% 0, 100% 100%, 0 100%);
+    filter: drop-shadow(0 -1px 0 color-mix(in srgb, var(--color-wedding-gold) 45%, transparent));
+}
+
+.envelope-flap {
+    z-index: 4;
+    transform-origin: top center;
+    clip-path: polygon(0 0, 100% 0, 50% 60%);
+    backface-visibility: hidden;
+    filter: brightness(0.96);
+}
+
+.envelope-card {
+    position: absolute;
+    inset: 8% 6%;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.25rem;
+    border-radius: 4px;
+    background: #FFFFFF;
+    border: 1px solid color-mix(in srgb, var(--color-wedding-gold) 50%, transparent);
+}
+
+.envelope-seal {
+    position: absolute;
+    left: 50%;
+    top: 55%;
+    z-index: 5;
+    width: 22%;
+    aspect-ratio: 1;
+    translate: -50% -50%;
+    filter: drop-shadow(0 4px 6px rgba(13, 71, 161, 0.35));
+}
+
+.envelope-seal-initials {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    font-size: clamp(0.9rem, 4.5vw, 1.35rem);
+    color: var(--color-wedding-gold);
+    text-shadow: 0 1px 0 rgba(0, 0, 0, 0.35);
+}
+
+.envelope-flowers {
+    position: absolute;
+    right: -6%;
+    bottom: -14%;
+    z-index: 6;
+    width: 44%;
+    pointer-events: none;
+}
+
+.envelope-hint {
+    animation: hint-pulse 2.4s ease-in-out infinite;
+}
+
+@keyframes hint-pulse {
+    50% { opacity: 0.45; }
+}
+
+/* ---------- Ornaments ---------- */
+.floral-corner {
+    position: absolute;
+    z-index: 0;
+    width: clamp(140px, 38vw, 300px);
+    pointer-events: none;
+    opacity: 0.9;
+}
+
+.paper-texture {
+    position: relative;
+    isolation: isolate;
+}
+
+.paper-texture::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: url('/images/envelope/paper.webp') center / 480px auto;
+    opacity: 0.3;
+    pointer-events: none;
+}
+
+.btn-wedding {
+    @apply inline-flex items-center justify-center gap-2 rounded-full border px-5 py-3 font-heading text-sm transition;
+    border-color: color-mix(in srgb, var(--color-wedding-gold) 60%, transparent);
+}
+
+.btn-wedding:hover {
+    transform: translateY(-2px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .sprite-bird,
+    .envelope-hint {
+        animation: none;
+    }
+
+    .btn-wedding:hover {
+        transform: none;
+    }
 }
 
 body.no-scroll { overflow: hidden; height: 100vh; }

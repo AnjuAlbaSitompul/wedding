@@ -2,8 +2,11 @@
     $person = config('wedding.bride');
 @endphp
 
-<section id="scene-bride" class="wedding-section">
-    <div class="wedding-card max-w-md text-center stagger-children">
+<section id="scene-bride" class="wedding-section overflow-hidden">
+    <div class="person-card wedding-card relative max-w-md text-center">
+        <img src="{{ asset('images/floral/corner-top-left.webp') }}" alt="" aria-hidden="true" loading="lazy"
+             class="person-ornament absolute -top-6 -left-6 w-28 pointer-events-none">
+
         <div class="w-40 h-40 mx-auto mb-6 rounded-full bg-gradient-to-br from-[#E3F2FD] to-[#90CAF9] flex items-center justify-center shadow-lg">
             @if ($person['photo'])
                 <img src="{{ asset($person['photo']) }}" alt="{{ $person['nickname'] }}" class="w-full h-full rounded-full object-cover">

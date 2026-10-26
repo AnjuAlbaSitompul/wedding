@@ -1,6 +1,8 @@
-<section id="scene-bismillah" class="wedding-section">
-    <div class="wedding-card max-w-2xl text-center">
-        <p class="font-arabic text-4xl md:text-5xl text-wedding-deep mb-6 leading-loose reveal">
+<section id="scene-bismillah" class="wedding-section overflow-hidden paper-texture">
+    <x-ui.floral-corners />
+
+    <div class="wedding-card relative z-10 max-w-2xl text-center">
+        <p class="bismillah-text font-arabic text-4xl md:text-5xl text-wedding-deep mb-6 leading-loose">
             بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ
         </p>
 
@@ -13,7 +15,7 @@
             kami bermaksud menyelenggarakan acara pernikahan putra-putri kami.
         </p>
 
-        <div class="wedding-divider"><i class="fa-solid fa-leaf"></i></div>
+        <x-ui.section-divider />
 
         <p class="font-arabic text-2xl md:text-3xl text-wedding-deep mb-6 leading-loose reveal">
             وَمِنْ آيَاتِهِ أَنْ خَلَقَ لَكُم مِّنْ أَنفُسِكُمْ أَزْوَاجًا<br>

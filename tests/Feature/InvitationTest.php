@@ -37,6 +37,24 @@ class InvitationTest extends TestCase
         $response->assertSee('Bapak Ahmad Surya');
     }
 
+    public function test_envelope_shows_guest_name(): void
+    {
+        $response = $this->get('/?g='.$this->encryptGuestName('Bapak Ahmad Surya'));
+
+        $response->assertOk();
+        $response->assertSee('id="envelope"', false);
+        $response->assertSee('Bapak Ahmad Surya');
+    }
+
+    public function test_envelope_escapes_html_in_guest_name(): void
+    {
+        $response = $this->get('/?g='.$this->encryptGuestName('<b>tes</b>'));
+
+        $response->assertOk();
+        $response->assertDontSee('<b>tes</b>', false);
+        $response->assertSee('&lt;b&gt;tes&lt;/b&gt;', false);
+    }
+
     public function test_invitation_page_falls_back_to_generic_greeting_for_invalid_token(): void
     {
         $response = $this->get('/?g=token-tidak-valid');

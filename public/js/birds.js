@@ -1,164 +1,173 @@
 (function () {
     'use strict';
 
-    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (prefersReducedMotion || !window.lottie || !window.gsap) return;
+    if (!window.gsap || !window.ScrollTrigger || !window.MotionPathPlugin) {
+        return;
+    }
 
-    gsap.registerPlugin(ScrollTrigger);
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        return;
+    }
 
-    // Bird configurations per section
-    const birdConfigs = [
-        {
-            id: 'bird-gate',
-            section: '#scene-gate',
-            animation: '/lottie/bird-pair.json',
-            trigger: 'center center',
-            position: { x: '50%', y: '40%' },
-            scale: 1.2,
-            behavior: 'fly-out'
-        },
-        {
-            id: 'bird-forest',
-            section: '#scene-forest',
-            animation: '/lottie/bird-flying.json',
-            trigger: 'top 80%',
-            position: { x: '20%', y: '30%' },
-            scale: 0.8,
-            behavior: 'ambient'
-        },
-        {
-            id: 'bird-couple',
-            section: '#scene-couple',
-            animation: '/lottie/bird-pair.json',
-            trigger: 'top 70%',
-            position: { x: '50%', y: '50%' },
-            scale: 1,
-            behavior: 'romantic-pair'
-        }
+    gsap.registerPlugin(ScrollTrigger, MotionPathPlugin);
+
+    const MAX_BIRDS = 6;
+    let activeBirds = 0;
+
+    /*
+     * Paths are in % of the section box (x: 0 = left edge, y: 0 = top edge) and converted to px at fly time.
+     * The sprite faces left; birds heading right are mirrored automatically.
+     */
+    const moments = [
+        { section: '#scene-forest', count: 4, path: [[-10, 62], [25, 42], [65, 28], [112, 8]], duration: 7, size: [40, 64], onOpen: true },
+        { section: '#scene-gate', count: 2, path: [[50, 55], [44, 36], [28, -10]], duration: 3.5, size: [48, 72], scale: [0.4, 1.4], opacity: [1, 0] },
+        { section: '#scene-couple-intro', pair: true, duration: 5, size: [44, 60] },
+        { section: '#scene-akad', count: 1, path: [[110, 22], [60, 14], [-12, 20]], duration: 11, size: [36, 48], opacity: [0.6, 0.6] },
+        { section: '#scene-resepsi', count: 1, path: [[-12, 18], [45, 10], [112, 16]], duration: 11, size: [36, 48], opacity: [0.6, 0.6] },
+        { section: '#scene-closing', count: 5, path: [[30, 75], [42, 45], [55, 20], [62, -5]], duration: 6, size: [40, 64], scale: [1, 0.3], opacity: [1, 0.2] },
     ];
 
-    class BirdController {
-        constructor() {
-            this.birds = new Map();
-            this.init();
+    function createBird(section, size) {
+        const flyer = document.createElement('div');
+        flyer.className = 'bird-flyer';
+        flyer.setAttribute('aria-hidden', 'true');
+        flyer.style.width = gsap.utils.random(size[0], size[1]) + 'px';
+        flyer.style.zIndex = '25';
+
+        const sprite = document.createElement('span');
+        sprite.className = 'sprite-bird';
+        sprite.style.animationDuration = gsap.utils.random(0.5, 0.8) + 's';
+        sprite.style.animationDelay = -gsap.utils.random(0, 0.6) + 's';
+        flyer.appendChild(sprite);
+
+        section.appendChild(flyer);
+        activeBirds++;
+
+        return flyer;
+    }
+
+    function release(bird) {
+        bird.remove();
+        activeBirds--;
+    }
+
+    function toPx(points, width, height, jitter) {
+        return points.map(([x, y]) => ({
+            x: (x + gsap.utils.random(-jitter, jitter)) / 100 * width,
+            y: (y + gsap.utils.random(-jitter, jitter)) / 100 * height,
+        }));
+    }
+
+    function face(bird, path) {
+        // Sprite looks left: mirror when the overall movement goes right.
+        const sprite = bird.firstChild;
+        sprite.style.transform = path[path.length - 1].x > path[0].x ? 'scaleX(-1)' : '';
+    }
+
+    function fly(moment, attempt = 0) {
+        const section = document.querySelector(moment.section);
+
+        if (!section) {
+            return;
         }
 
-        init() {
-            birdConfigs.forEach(config => this.createBird(config));
+        // Respect the on-screen cap by waiting (up to ~5 s) instead of dropping the moment.
+        const needed = moment.pair ? 2 : moment.count;
+        if (activeBirds + needed > MAX_BIRDS && attempt < 6) {
+            gsap.delayedCall(0.8, () => fly(moment, attempt + 1));
+
+            return;
         }
 
-        createBird(config) {
-            const container = document.createElement('div');
-            container.id = config.id;
-            container.className = 'bird-lottie-container pointer-events-none';
-            container.style.cssText = `
-                position: absolute;
-                left: ${config.position.x};
-                top: ${config.position.y};
-                transform: translate(-50%, -50%) scale(${config.scale});
-                z-index: 25;
-                width: 200px;
-                height: 200px;
-            `;
+        if (moment.pair) {
+            flyPair(section, moment);
 
-            const section = document.querySelector(config.section);
-            if (!section) return;
+            return;
+        }
 
-            section.appendChild(container);
+        const { width, height } = section.getBoundingClientRect();
+        const count = Math.max(0, Math.min(moment.count, MAX_BIRDS - activeBirds));
+        const [scaleFrom, scaleTo] = moment.scale || [1, 1];
+        const [opacityFrom, opacityTo] = moment.opacity || [1, 1];
 
-            // Load Lottie
-            const anim = lottie.loadAnimation({
-                container,
-                renderer: 'svg',
-                loop: config.behavior === 'ambient',
-                autoplay: false,
-                path: config.animation
+        for (let i = 0; i < count; i++) {
+            const bird = createBird(section, moment.size);
+            const path = toPx(moment.path, width, height, 6);
+            face(bird, path);
+
+            gsap.set(bird, { x: path[0].x, y: path[0].y, xPercent: -50, yPercent: -50, scale: scaleFrom, opacity: opacityFrom });
+            gsap.to(bird, {
+                motionPath: { path, curviness: 1.4 },
+                scale: scaleTo,
+                opacity: opacityTo,
+                duration: moment.duration + gsap.utils.random(-0.8, 0.8),
+                delay: i * gsap.utils.random(0.15, 0.4),
+                ease: 'sine.inOut',
+                onComplete: () => release(bird),
             });
-
-            this.birds.set(config.id, { config, container, anim, played: false });
-            this.setupTrigger(config);
         }
+    }
 
-        setupTrigger(config) {
-            const bird = this.birds.get(config.id);
-            if (!bird) return;
+    /** Two birds come in from opposite sides, meet above the title, then leave upward together. */
+    function flyPair(section, moment) {
+        const { width, height } = section.getBoundingClientRect();
+        const meet = { x: width * 0.5, y: height * 0.14 };
 
-            ScrollTrigger.create({
-                trigger: config.section,
-                start: config.trigger,
-                onEnter: () => this.triggerBird(config.id, 'enter'),
-                onLeaveBack: () => this.triggerBird(config.id, 'leave'),
-                once: config.behavior !== 'ambient'
-            });
-        }
+        [-1, 1].forEach((side) => {
+            const bird = createBird(section, moment.size);
+            const start = { x: width * (side < 0 ? -0.1 : 1.1), y: height * 0.35 };
+            const near = { x: meet.x + side * 28, y: meet.y };
+            const exit = { x: meet.x + side * 60 + width * 0.15, y: -height * 0.15 };
+            face(bird, [start, near]);
 
-        triggerBird(id, direction) {
-            const bird = this.birds.get(id);
-            if (!bird) return;
+            gsap.set(bird, { x: start.x, y: start.y, xPercent: -50, yPercent: -50 });
+            gsap.timeline({ onComplete: () => release(bird) })
+                .to(bird, { motionPath: { path: [start, { x: (start.x + near.x) / 2, y: height * 0.2 }, near], curviness: 1.2 }, duration: moment.duration * 0.55, ease: 'sine.out' })
+                .add(() => face(bird, [near, exit]))
+                .to(bird, { motionPath: { path: [near, { x: (near.x + exit.x) / 2, y: meet.y - height * 0.08 }, exit], curviness: 1.2 }, duration: moment.duration * 0.45, ease: 'sine.in' });
+        });
+    }
 
-            const { anim, config, played } = bird;
-
-            if (direction === 'enter' && !played) {
-                switch (config.behavior) {
-                    case 'fly-out':
-                        this.animateFlyOut(bird);
-                        break;
-                    case 'romantic-pair':
-                        this.animateRomanticPair(bird);
-                        break;
-                    case 'ambient':
-                        anim.play();
-                        break;
-                }
-                bird.played = true;
+    moments.forEach((moment) => {
+        if (moment.onOpen) {
+            // The forest is already visible behind the envelope: wait until it opens.
+            if (window.invitationOpened || !document.getElementById('entry-overlay')) {
+                fly(moment);
+            } else {
+                window.addEventListener('invitation:opened', () => gsap.delayedCall(0.4, () => fly(moment)), { once: true });
             }
+
+            return;
         }
 
-        animateFlyOut(bird) {
-            const { anim, container, config } = bird;
+        ScrollTrigger.create({ trigger: moment.section, start: 'top 60%', once: true, onEnter: () => fly(moment) });
+    });
 
-            // Play takeoff animation first, then fly out
-            anim.goToAndPlay(0, true);
+    /* Ambient: a small, faint bird crosses the viewport every 15–30 s so the page never feels static. */
+    const ambientLayer = document.createElement('div');
+    ambientLayer.className = 'fixed inset-0 z-[24] pointer-events-none overflow-hidden';
+    ambientLayer.setAttribute('aria-hidden', 'true');
+    document.body.appendChild(ambientLayer);
 
-            gsap.fromTo(container,
-                { xPercent: -50, yPercent: -50, scale: config.scale, opacity: 1 },
-                {
-                    xPercent: -50,
-                    yPercent: -150,
-                    scale: config.scale * 0.5,
-                    opacity: 0,
-                    duration: 2.5,
-                    ease: 'power2.out',
-                    delay: 0.5,
-                    onComplete: () => {
-                        container.style.display = 'none';
-                    }
-                }
-            );
+    function ambient() {
+        if (!document.hidden && activeBirds < MAX_BIRDS && !document.getElementById('entry-overlay')) {
+            const width = window.innerWidth;
+            const height = window.innerHeight;
+            const leftToRight = Math.random() < 0.5;
+            const y = gsap.utils.random(0.08, 0.3) * height;
+            const path = [
+                { x: leftToRight ? -40 : width + 40, y },
+                { x: width / 2, y: y - gsap.utils.random(20, 60) },
+                { x: leftToRight ? width + 40 : -40, y: y + gsap.utils.random(-30, 30) },
+            ];
+            const bird = createBird(ambientLayer, [28, 36]);
+            face(bird, path);
+            gsap.set(bird, { x: path[0].x, y: path[0].y, xPercent: -50, yPercent: -50, opacity: 0.4 });
+            gsap.to(bird, { motionPath: { path, curviness: 1.3 }, duration: gsap.utils.random(12, 16), ease: 'none', onComplete: () => release(bird) });
         }
 
-        animateRomanticPair(bird) {
-            const { anim, container, config } = bird;
-
-            anim.goToAndPlay(0, true);
-
-            // Subtle circular motion
-            gsap.to(container, {
-                xPercent: -50,
-                yPercent: -50,
-                rotation: 360,
-                duration: 8,
-                ease: 'none',
-                repeat: -1,
-                transformOrigin: 'center center'
-            });
-        }
+        gsap.delayedCall(gsap.utils.random(15, 30), ambient);
     }
 
-    // Initialize on DOM ready
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', () => new BirdController());
-    } else {
-        new BirdController();
-    }
+    gsap.delayedCall(gsap.utils.random(15, 30), ambient);
 })();
