@@ -2,6 +2,8 @@
 
 @push('preload')
     <link rel="preload" as="image" href="{{ asset('images/forest/sky.webp') }}" fetchpriority="high">
+    <link rel="preload" as="image" href="{{ asset('images/gate/floral-arch.webp') }}">
+    <link rel="preload" as="image" href="{{ asset('images/couple/couple.webp') }}">
     <link rel="preload" as="image" href="{{ asset('images/envelope/paper.webp') }}">
     <link rel="preload" as="image" href="{{ asset('images/envelope/wax-seal.webp') }}">
     <link rel="preload" as="image" href="{{ asset('images/envelope/flowers.webp') }}">
@@ -16,13 +18,15 @@
 
     <x-decorations.music-toggle />
 
+    <div class="scroll-progress" aria-hidden="true"><span id="scroll-progress-bar"></span></div>
+
     <x-decorations.falling-leaves />
     <x-decorations.floating-particles />
 
+    <nav id="section-nav" class="section-nav" aria-label="Navigasi undangan"></nav>
+
     <main>
         <x-sections.opening-forest />
-        <x-sections.gate />
-        <x-sections.characters />
         <x-sections.bismillah />
         <x-sections.guest-greeting :guest-name="$guestName" />
         <x-sections.couple-intro />

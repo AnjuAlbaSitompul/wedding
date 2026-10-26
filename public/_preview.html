@@ -1,0 +1,32 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <style>
+        html, body { margin: 0; height: 100%; background: #E3F2FD; }
+        iframe { display: block; width: 390px; height: 844px; border: 0; }
+    </style>
+</head>
+<body>
+<iframe id="frame" src="/"></iframe>
+<script>
+    const position = Number(new URLSearchParams(location.search).get('y') || 0);
+    const frame = document.getElementById('frame');
+
+    frame.addEventListener('load', () => {
+        const page = frame.contentWindow;
+        const doc = page.document;
+
+        doc.getElementById('entry-overlay')?.remove();
+        doc.body.classList.remove('no-scroll');
+        page.weddingLenis?.start();
+        page.ScrollTrigger?.refresh();
+
+        setTimeout(() => {
+            page.scrollTo(0, position);
+            page.ScrollTrigger?.update();
+        }, 1200);
+    });
+</script>
+</body>
+</html>

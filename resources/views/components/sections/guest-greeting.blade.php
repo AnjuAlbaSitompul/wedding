@@ -1,16 +1,19 @@
 @props(['guestName'])
 
-<section id="scene-greeting" class="wedding-section">
-    <div class="text-center max-w-2xl">
-        <p class="font-elegant text-xl md:text-2xl text-wedding-deep/70 mb-2 reveal">Kepada Yth.</p>
-        <p class="font-heading text-base md:text-lg text-wedding-deep/60 mb-4 reveal">Bapak/Ibu/Saudara/i</p>
+<section id="scene-greeting" class="wedding-section" data-nav="Kepada">
+    <div class="greeting wedding-card relative w-full max-w-2xl text-center">
+        <img src="{{ asset('images/floral/sprig-soft.webp') }}" alt="" aria-hidden="true" loading="lazy" decoding="async"
+             class="card-sprig">
 
-        <p class="guest-name font-script text-4xl md:text-6xl text-wedding-deep glow-text break-words">{{ $guestName }}</p>
+        <p class="eyebrow reveal">Kepada Yth.</p>
+        <p class="mt-3 font-heading text-xs uppercase tracking-[0.3em] text-wedding-deep/55 reveal md:text-sm">Bapak / Ibu / Saudara/i</p>
+
+        <p class="guest-name mt-5 font-script text-[2.5rem] leading-tight text-wedding-ink glow-text break-words md:text-6xl">{{ $guestName }}</p>
 
         <x-ui.section-divider />
 
-        <p class="font-body text-sm md:text-base text-wedding-deep/70 reveal">
-            Mohon maaf apabila ada kesalahan dalam penulisan nama/gelar
+        <p class="font-elegant text-base text-wedding-deep/65 reveal md:text-lg">
+            Mohon maaf apabila ada kesalahan dalam penulisan nama / gelar
         </p>
     </div>
 </section>

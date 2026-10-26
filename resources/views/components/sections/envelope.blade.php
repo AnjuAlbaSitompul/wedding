@@ -16,7 +16,7 @@
             <img src="{{ asset('images/envelope/wax-seal.webp') }}" alt="" class="w-full h-full">
             <span class="envelope-seal-initials font-script">D&amp;D</span>
         </span>
-        <img src="{{ asset('images/envelope/flowers.webp') }}" alt="" class="envelope-flowers" aria-hidden="true">
+        <img src="{{ asset('images/floral/bloom-soft.webp') }}" alt="" class="envelope-flowers" aria-hidden="true">
     </button>
 
     <div class="envelope-caption relative z-10 mt-10 px-6 text-center max-w-sm">

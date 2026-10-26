@@ -2,34 +2,33 @@
     $event = config('wedding.akad');
 @endphp
 
-<section id="scene-akad" class="wedding-section overflow-hidden paper-texture">
+<section id="scene-akad" class="wedding-section overflow-hidden paper-texture" data-nav="Akad">
     <x-ui.floral-corners />
 
-    <div class="relative z-10 flex flex-col items-center text-center mb-8">
-        <i class="event-icon fa-solid fa-mosque text-5xl text-wedding-blue mb-4 reveal" aria-hidden="true"></i>
-        <h3 class="section-title font-heading text-3xl md:text-4xl text-wedding-deep reveal">Akad Nikah</h3>
+    <div class="relative z-10 mb-10 flex flex-col items-center text-center">
+        <div class="event-icon-ring reveal">
+            <i class="event-icon fa-solid fa-mosque text-xl" aria-hidden="true"></i>
+        </div>
+        <p class="eyebrow reveal">Acara Pertama</p>
+        <h3 class="section-title mt-3 font-heading text-3xl text-wedding-ink md:text-4xl reveal">Akad Nikah</h3>
     </div>
 
-    <div class="wedding-card relative z-10 max-w-lg stagger-children">
-        <div class="flex items-center justify-center gap-4 mb-6">
-            <i class="fa-solid fa-calendar-day text-wedding-blue text-2xl"></i>
-            <div class="text-center">
-                <p class="font-heading text-xl text-wedding-deep">{{ $event['day'] }}</p>
-                <p class="font-script text-4xl text-wedding-deep">{{ $event['date'] }}</p>
-            </div>
+    <div class="event-card wedding-card relative z-10 w-full max-w-lg reveal">
+        <div class="event-head">
+            <span class="event-weekday">{{ $event['day'] }}</span>
+            <span class="event-date">{{ $event['date'] }}</span>
+            <span class="event-time"><i class="fa-regular fa-clock mr-2" aria-hidden="true"></i>{{ $event['time'] }}</span>
         </div>
 
-        <div class="space-y-2 text-center">
-            <p class="font-elegant text-lg text-wedding-deep/80">
-                <i class="fa-solid fa-clock text-wedding-blue mr-2"></i>{{ $event['time'] }}
-            </p>
-            <p class="font-body text-sm text-wedding-deep/70">{{ $event['address'] }}</p>
-            <p class="font-body text-sm text-wedding-deep/60">{{ $event['district'] }} - {{ $event['subdistrict'] }}</p>
-            <p class="font-body text-sm text-wedding-deep/60">{{ $event['city'] }} - {{ $event['province'] }} kode pos {{ $event['postal_code'] }}</p>
+        <div class="event-body">
+            <i class="fa-solid fa-location-dot mb-1 text-lg text-wedding-blue" aria-hidden="true"></i>
+            <p class="event-address">{{ $event['address'] }}</p>
+            <p class="event-region">{{ $event['district'] }} &middot; {{ $event['subdistrict'] }}</p>
+            <p class="event-region">{{ $event['city'] }} &mdash; {{ $event['province'] }} {{ $event['postal_code'] }}</p>
         </div>
 
         @if ($event['maps_url'])
-            <div class="text-center mt-6">
+            <div class="mt-7 text-center">
                 <a href="{{ $event['maps_url'] }}" target="_blank" rel="noopener" class="btn-wedding bg-wedding-deep text-white hover:bg-wedding-navy">
                     <i class="fa-solid fa-location-dot" aria-hidden="true"></i> Lihat Lokasi
                 </a>

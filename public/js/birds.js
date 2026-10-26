@@ -19,8 +19,7 @@
      * The sprite faces left; birds heading right are mirrored automatically.
      */
     const moments = [
-        { section: '#scene-forest', count: 4, path: [[-10, 62], [25, 42], [65, 28], [112, 8]], duration: 7, size: [40, 64], onOpen: true },
-        { section: '#scene-gate', count: 2, path: [[50, 55], [44, 36], [28, -10]], duration: 3.5, size: [48, 72], scale: [0.4, 1.4], opacity: [1, 0] },
+        { section: '#scene-journey', count: 4, path: [[-10, 62], [25, 42], [65, 28], [112, 8]], duration: 7, size: [40, 64], onOpen: true },
         { section: '#scene-couple-intro', pair: true, duration: 5, size: [44, 60] },
         { section: '#scene-akad', count: 1, path: [[110, 22], [60, 14], [-12, 20]], duration: 11, size: [36, 48], opacity: [0.6, 0.6] },
         { section: '#scene-resepsi', count: 1, path: [[-12, 18], [45, 10], [112, 16]], duration: 11, size: [36, 48], opacity: [0.6, 0.6] },
@@ -85,13 +84,15 @@
             return;
         }
 
-        const { width, height } = section.getBoundingClientRect();
+        // The journey keeps its visuals inside a sticky stage, so birds fly over that box.
+        const stage = section.querySelector('.journey-stage') || section;
+        const { width, height } = stage.getBoundingClientRect();
         const count = Math.max(0, Math.min(moment.count, MAX_BIRDS - activeBirds));
         const [scaleFrom, scaleTo] = moment.scale || [1, 1];
         const [opacityFrom, opacityTo] = moment.opacity || [1, 1];
 
         for (let i = 0; i < count; i++) {
-            const bird = createBird(section, moment.size);
+            const bird = createBird(stage, moment.size);
             const path = toPx(moment.path, width, height, 6);
             face(bird, path);
 

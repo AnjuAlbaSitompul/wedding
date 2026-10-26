@@ -1,18 +1,18 @@
-<section id="scene-gallery" class="wedding-section">
-    <div class="text-center mb-8">
-        <h3 class="section-title font-heading text-3xl md:text-4xl text-wedding-deep reveal">Our Moments</h3>
-        <x-ui.section-divider />
+<section id="scene-gallery" class="wedding-section" data-nav="Galeri">
+    <div class="mb-10 text-center">
+        <p class="eyebrow reveal">Our Moments</p>
+        <h3 class="section-title mt-4 font-heading text-3xl text-wedding-ink reveal md:text-4xl">Galeri</h3>
     </div>
 
-    <div class="gallery-grid grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4 max-w-3xl w-full">
+    <div class="gallery-grid grid w-full max-w-3xl grid-cols-2 gap-3 md:grid-cols-3 md:gap-5">
         @for ($i = 1; $i <= 6; $i++)
-            <div class="aspect-square rounded-xl overflow-hidden bg-white/70 border border-wedding-gold/30 shadow-md group">
-                <div class="w-full h-full flex items-center justify-center bg-gradient-to-br from-[#E3F2FD] to-[#90CAF9] transition-transform duration-500 group-hover:scale-110">
-                    <i class="fa-regular fa-image text-4xl text-white/80"></i>
+            <figure class="gallery-tile group">
+                <div class="gallery-fill">
+                    <i class="fa-regular fa-image text-3xl text-white/85" aria-hidden="true"></i>
                 </div>
-            </div>
+            </figure>
         @endfor
     </div>
 
-    <p class="font-body text-xs text-wedding-deep/50 mt-6 reveal">Foto galeri akan segera hadir</p>
+    <p class="mt-8 font-body text-[10px] uppercase tracking-[0.35em] text-wedding-deep/45 reveal">Foto galeri akan segera hadir</p>
 </section>
