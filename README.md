@@ -1,58 +1,179 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
-
 <p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
+    <span style="font-size: 28px;"><strong>Undangan Pernikahan Digital — Dani &amp; Desi</strong></span>
 </p>
 
-## About Laravel
+<p align="center">
+    Sabtu, 28 November 2026 · Belawan, Medan
+</p>
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+Aplikasi undangan pernikahan digital berbasis **Laravel 13** (PHP 8.3). Tamu membuka undangan lewat link yang dipersonalisasi, dan pemilik acara dapat membuat link personal untuk setiap tamu melalui halaman generator.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+---
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## Fitur
 
-## Learning Laravel
+### Halaman Undangan (`/`)
+- **Amplop pembuka interaktif** — tamu mengetuk amplop untuk masuk (animasi GSAP).
+- **Nama tamu personal** — nama tamu tampil otomatis dari parameter link (`?g=...`), default "Bapak/Ibu/Saudara/i".
+- **Scroll narrative** — perjalanan hutan menuju gerbang bunga, lalu bertemu mempelai (GSAP ScrollTrigger + Lenis smooth scroll).
+- **Musik latar** — tombol putar/jeda musik (`audio/background.mp3`).
+- **Efek dekorasi** — daun jatuh dan partikel melayang (canvas), animasi burung.
+- **Countdown** — hitung mundur ke hari acara (hari/jam/menit/detik).
+- **Detail acara** — Akad Nikah dan Resepsi lengkap dengan hari, tanggal, jam, dan alamat.
+- **Profil mempelai** — data calon pengantin pria & wanita beserta orang tua.
+- **Turut mengundang** — daftar keluarga yang mengundang.
+- **Galeri foto** — grid galeri (placeholder, siap diisi).
+- **RSVP & Ucapan** — form konfirmasi kehadiran (hadir/berhalangan, jumlah orang) + pesan, ditampilkan real-time di *Wall of Wishes* (maksimal 50 ucapan terbaru).
+- **Amplop digital** — informasi rekening (placeholder).
+- **Tombol bagikan** — Share via WhatsApp & Copy Link.
+- **Navigasi section** — menu navigasi antar bagian undangan.
+- **SEO / Open Graph** — meta OG & Twitter Card untuk preview saat link dibagikan.
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+### Halaman Generator (`/generate`)
+- **Login dengan password** untuk melindungi halaman generator.
+- **Buat link personal** — masukkan nama tamu & nomor WhatsApp, sistem membuat link undangan terenkripsi khusus untuk tamu tersebut.
+- **Preview greeting** — menampilkan "Kepada Yth. {nama}".
+- **Copy link** & **Kirim via WhatsApp** — kirim undangan langsung ke tamu dengan pesan otomatis.
+- **Logout** dari sesi generator.
 
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+---
 
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
+## Kebutuhan
 
-## Agentic Development
+- PHP 8.3+
+- Composer
+- Node.js & npm
+- Database (default: SQLite)
 
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
+---
+
+## Instalasi
+
+Cara tercepat menggunakan script `setup` bawaan:
 
 ```bash
-composer require laravel/boost --dev
-
-php artisan boost:install
+composer setup
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+Script tersebut akan menjalankan `composer install`, menyalin `.env`, generate app key, migrasi database, `npm install`, dan `npm run build`.
 
-## Contributing
+### Manual
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+```bash
+composer install
+copy .env.example .env      # Windows
+php artisan key:generate
+php artisan migrate
+npm install
+npm run build
+```
 
-## Code of Conduct
+---
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+## Menjalankan Aplikasi
 
-## Security Vulnerabilities
+```bash
+composer dev
+```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+Atau jalankan langsung:
 
-## License
+```bash
+php artisan serve
+```
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+Aplikasi berjalan di `http://localhost:8000`.
+
+---
+
+## Cara Menggunakan
+
+### 1. Membuka Undangan
+Buka `http://localhost:8000/` di browser. Tamu akan melihat amplop pembuka; ketuk amplop untuk masuk ke undangan.
+
+### 2. Membuat Link Personal Tamu (`/generate`)
+1. Buka `http://localhost:8000/generate`.
+2. Masukkan **password generator** (lihat di bawah).
+3. Isi **Nama Tamu** dan **Nomor WhatsApp** tamu (format `08xxxxxxxxxx`).
+4. Klik **Generate Link**.
+5. Salin link undangan, atau klik **Kirim via WhatsApp** untuk mengirim langsung ke tamu.
+
+#### Default Password
+Password default halaman `/generate` adalah:
+
+```
+ubah-password-ini
+```
+
+Nilai ini berasal dari variabel `GENERATE_PASSWORD` di file `.env` (fallback di `config/wedding.php`). **Ganti sebelum dipakai di produksi:**
+
+```env
+GENERATE_PASSWORD=password-rahasia-anda
+```
+
+Setelah mengubah `.env`, jalankan `php artisan config:clear`.
+
+---
+
+## Konfigurasi
+
+### `config/wedding.php`
+Semua data acara dikonfigurasi di sini:
+
+- `name_order` — urutan nama mempelai (`bride_first` atau `groom_first`).
+- `groom` / `bride` — nama lengkap, panggilan, orang tua, Instagram, foto.
+- `akad` / `resepsi` — hari, tanggal, jam, alamat, dan link Google Maps.
+- `turut_mengundang` — daftar keluarga yang mengundang.
+- `generate_password` — password halaman generator.
+- `og` — judul, deskripsi, dan gambar untuk Open Graph.
+
+### Variabel `.env` terkait
+
+```env
+APP_URL=http://localhost:8000
+GENERATE_PASSWORD=ubah-password-ini
+WEDDING_NAME_ORDER=bride_first
+```
+
+### Aset
+Letakkan aset di `public/`:
+- `public/audio/background.mp3` — musik latar.
+- `public/images/...` — gambar latar, galeri, foto mempelai, favicon, dsb.
+
+> Jika perubahan tampilan tidak muncul atau muncul error "Unable to locate file in Vite manifest", jalankan `npm run build` atau `npm run dev`.
+
+---
+
+## Route
+
+| Method | URI | Nama | Keterangan |
+| --- | --- | --- | --- |
+| GET | `/` | `invitation` | Halaman undangan |
+| POST | `/rsvp` | `rsvp.store` | Simpan RSVP & ucapan |
+| GET | `/generate` | `generate.form` | Form generator |
+| POST | `/generate/auth` | `generate.auth` | Login generator |
+| POST | `/generate` | `generate.create` | Buat link undangan |
+| POST | `/generate/logout` | `generate.logout` | Logout generator |
+
+---
+
+## Testing
+
+```bash
+composer test
+```
+
+atau
+
+```bash
+php artisan test
+```
+
+---
+
+## Teknologi
+
+- Laravel 13 · PHP 8.3
+- Blade + Tailwind CSS 4 (Vite)
+- GSAP + ScrollTrigger + Lenis (animasi)
+- SQLite (default database)
