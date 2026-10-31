@@ -575,37 +575,39 @@
     pointer-events: none;
 }
 
-/* ---------- Portrait + person cards ---------- */
+/* ---------- Monogram + person cards ---------- */
 .person-card {
-    @apply text-center;
+    @apply w-full text-center;
     max-width: 26rem;
 }
 
-.person-card .portrait {
-    width: clamp(8.5rem, 34vw, 10.5rem);
-    aspect-ratio: 4 / 5;
-    margin: 0 auto 1.75rem;
-    padding: 4px;
-    border-radius: 999px 999px 1.4rem 1.4rem;
-    background: linear-gradient(160deg, color-mix(in srgb, var(--color-wedding-gold) 85%, white), rgba(255, 255, 255, 0.4) 45%, color-mix(in srgb, var(--color-wedding-gold) 70%, white));
-    box-shadow: 0 20px 40px -24px rgba(13, 71, 161, 0.55);
+.monogram {
+    position: relative;
+    display: grid;
+    place-items: center;
+    width: clamp(6.5rem, 28vw, 8rem);
+    aspect-ratio: 1;
+    margin: 1.5rem auto 1.75rem;
+    border-radius: 999px;
+    border: 1px solid color-mix(in srgb, var(--color-wedding-gold) 55%, transparent);
+    background: radial-gradient(circle at 50% 35%, #fff 0%, #EAF3FD 70%, #D6E9FB 100%);
+    box-shadow: 0 20px 40px -24px rgba(13, 71, 161, 0.55), inset 0 0 0 6px rgba(255, 255, 255, 0.85);
 }
 
-.person-card .portrait-inner {
-    display: flex;
-    width: 100%;
-    height: 100%;
-    align-items: center;
-    justify-content: center;
-    overflow: hidden;
+.monogram::before {
+    content: '';
+    position: absolute;
+    inset: -9px;
     border-radius: inherit;
-    background: linear-gradient(150deg, #EAF3FD 0%, #BBDEFB 60%, #90CAF9 100%);
+    border: 1px dashed color-mix(in srgb, var(--color-wedding-gold) 40%, transparent);
 }
 
-.person-card .portrait-inner img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
+.monogram span {
+    font-family: var(--font-script);
+    font-size: clamp(3.2rem, 14vw, 4.2rem);
+    line-height: 1;
+    translate: 0 0.08em;
+    color: var(--color-wedding-ink);
 }
 
 .person-card .person-divider {
@@ -710,30 +712,91 @@
     color: color-mix(in srgb, var(--color-wedding-deep) 60%, white);
 }
 
-/* ---------- Gallery ---------- */
-.gallery-tile {
+/* ---------- Location map ---------- */
+.map-card {
+    @apply p-3 pb-7 sm:p-4 sm:pb-8 md:p-5 md:pb-9;
+}
+
+.map-frame {
     position: relative;
-    aspect-ratio: 3 / 4;
+    z-index: 1;
+    display: block;
+    aspect-ratio: 4 / 3;
     overflow: hidden;
-    border-radius: 999px 999px 16px 16px;
-    padding: 3px;
-    background: linear-gradient(170deg, color-mix(in srgb, var(--color-wedding-gold) 60%, white), rgba(255, 255, 255, 0.35) 55%, color-mix(in srgb, var(--color-wedding-blue) 70%, white));
+    border-radius: 18px;
+    border: 1px solid color-mix(in srgb, var(--color-wedding-gold) 30%, transparent);
+    background: #EAF3FD;
     box-shadow: 0 24px 40px -30px rgba(10, 45, 85, 0.65);
 }
 
-.gallery-fill {
-    display: flex;
-    width: 100%;
-    height: 100%;
-    align-items: center;
-    justify-content: center;
-    border-radius: inherit;
-    background: linear-gradient(150deg, #EAF3FD 0%, #C6E1FA 55%, #90CAF9 100%);
-    transition: transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+@media (min-width: 640px) {
+    .map-frame { aspect-ratio: 16 / 9; }
 }
 
-.gallery-tile:hover .gallery-fill {
-    transform: scale(1.06);
+/* The link sits on top; the iframe is visual only so a tap always opens Google Maps. */
+.map-frame iframe {
+    width: 100%;
+    height: 100%;
+    border: 0;
+    pointer-events: none;
+    filter: saturate(0.75) hue-rotate(-8deg);
+    transition: transform 0.8s cubic-bezier(0.22, 1, 0.36, 1), filter 0.4s ease;
+}
+
+.map-frame:hover iframe,
+.map-frame:focus-visible iframe {
+    transform: scale(1.04);
+    filter: none;
+}
+
+.map-frame:focus-visible {
+    outline: 2px solid var(--color-wedding-gold);
+    outline-offset: 3px;
+}
+
+.map-pin {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    display: grid;
+    place-items: center;
+    width: 3rem;
+    height: 3rem;
+    translate: -50% -100%;
+    border-radius: 999px 999px 999px 0;
+    rotate: -45deg;
+    color: #fff;
+    background: var(--color-wedding-deep);
+    border: 3px solid #fff;
+    box-shadow: 0 12px 24px -10px rgba(8, 40, 80, 0.8);
+    animation: map-pin-bob 2.4s ease-in-out infinite;
+}
+
+.map-pin i { rotate: 45deg; }
+
+.map-hint {
+    position: absolute;
+    left: 50%;
+    bottom: 0.9rem;
+    translate: -50% 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    white-space: nowrap;
+    padding: 0.45rem 1rem;
+    border-radius: 999px;
+    font-family: var(--font-body);
+    font-size: 0.7rem;
+    letter-spacing: 0.08em;
+    color: var(--color-wedding-ink);
+    background: rgba(255, 255, 255, 0.92);
+    border: 1px solid color-mix(in srgb, var(--color-wedding-gold) 35%, transparent);
+    box-shadow: 0 10px 22px -16px rgba(10, 45, 85, 0.8);
+}
+
+@keyframes map-pin-bob {
+    0%, 100% { transform: translateY(0); }
+    50%      { transform: translateY(-6px); }
 }
 
 /* ---------- Forms ---------- */
@@ -885,7 +948,8 @@
 
 @media (prefers-reduced-motion: reduce) {
     .sprite-bird,
-    .envelope-hint {
+    .envelope-hint,
+    .map-pin {
         animation: none;
     }
 

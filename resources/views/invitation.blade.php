@@ -34,9 +34,9 @@
         <x-sections.bride />
         <x-sections.akad />
         <x-sections.resepsi />
+        <x-sections.location />
         <x-sections.countdown />
         <x-sections.turut-mengundang />
-        <x-sections.gallery />
         <x-sections.rsvp :rsvps="$rsvps" />
         <x-sections.gift />
         <x-sections.closing />

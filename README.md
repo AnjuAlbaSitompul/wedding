@@ -22,7 +22,7 @@ Aplikasi undangan pernikahan digital berbasis **Laravel 13** (PHP 8.3). Tamu mem
 - **Detail acara** — Akad Nikah dan Resepsi lengkap dengan hari, tanggal, jam, dan alamat.
 - **Profil mempelai** — data calon pengantin pria & wanita beserta orang tua.
 - **Turut mengundang** — daftar keluarga yang mengundang.
-- **Galeri foto** — grid galeri (placeholder, siap diisi).
+- **Lokasi** — peta Google Maps (koordinat di `config/wedding.php` → `location`), ketuk untuk membuka Google Maps / petunjuk arah.
 - **RSVP & Ucapan** — form konfirmasi kehadiran (hadir/berhalangan, jumlah orang) + pesan, ditampilkan real-time di *Wall of Wishes* (maksimal 50 ucapan terbaru).
 - **Amplop digital** — informasi rekening (placeholder).
 - **Tombol bagikan** — Share via WhatsApp & Copy Link.
@@ -121,7 +121,7 @@ Setelah mengubah `.env`, jalankan `php artisan config:clear`.
 Semua data acara dikonfigurasi di sini:
 
 - `name_order` — urutan nama mempelai (`bride_first` atau `groom_first`).
-- `groom` / `bride` — nama lengkap, panggilan, orang tua, Instagram, foto.
+- `groom` / `bride` — nama lengkap, panggilan, orang tua, Instagram.
 - `akad` / `resepsi` — hari, tanggal, jam, alamat, dan link Google Maps.
 - `turut_mengundang` — daftar keluarga yang mengundang.
 - `generate_password` — password halaman generator.
@@ -138,7 +138,7 @@ WEDDING_NAME_ORDER=bride_first
 ### Aset
 Letakkan aset di `public/`:
 - `public/audio/background.mp3` — musik latar.
-- `public/images/...` — gambar latar, galeri, foto mempelai, favicon, dsb.
+- `public/images/...` — gambar latar, ilustrasi, favicon, dsb.
 
 > Jika perubahan tampilan tidak muncul atau muncul error "Unable to locate file in Vite manifest", jalankan `npm run build` atau `npm run dev`.
 

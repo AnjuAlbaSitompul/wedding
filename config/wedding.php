@@ -1,5 +1,9 @@
 <?php
 
+$latitude = 3.5314293;
+$longitude = 98.7070393;
+$mapsUrl = "https://www.google.com/maps/search/?api=1&query={$latitude},{$longitude}";
+
 return [
     'name_order' => env('WEDDING_NAME_ORDER', 'bride_first'), // bride_first | groom_first
 
@@ -9,7 +13,6 @@ return [
         'father' => 'Bapak Misto',
         'mother' => 'Ibu Sugini',
         'instagram' => '',
-        'photo' => null,
     ],
 
     'bride' => [
@@ -18,7 +21,13 @@ return [
         'father' => 'Alm. Bapak Zulkarnain',
         'mother' => 'Ibu Amriwati',
         'instagram' => '',
-        'photo' => null,
+    ],
+
+    'location' => [
+        'latitude' => $latitude,
+        'longitude' => $longitude,
+        'maps_url' => $mapsUrl,
+        'embed_url' => "https://maps.google.com/maps?q={$latitude},{$longitude}&z=16&hl=id&output=embed",
     ],
 
     'akad' => [
@@ -31,7 +40,7 @@ return [
         'city' => 'Medan',
         'province' => 'Sumatera Utara',
         'postal_code' => '20411',
-        'maps_url' => '',
+        'maps_url' => $mapsUrl,
     ],
 
     'resepsi' => [
@@ -44,7 +53,7 @@ return [
         'city' => 'Medan',
         'province' => 'Sumatera Utara',
         'postal_code' => '20411',
-        'maps_url' => '',
+        'maps_url' => $mapsUrl,
     ],
 
     'turut_mengundang' => [

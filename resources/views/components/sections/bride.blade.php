@@ -7,14 +7,8 @@
         <img src="{{ asset('images/floral/sprig-soft.webp') }}" alt="" aria-hidden="true" loading="lazy" decoding="async"
              class="person-ornament card-sprig">
 
-        <div class="portrait">
-            <div class="portrait-inner">
-                @if ($person['photo'])
-                    <img src="{{ asset($person['photo']) }}" alt="{{ $person['nickname'] }}">
-                @else
-                    <i class="fa-solid fa-user text-5xl text-white/90" aria-hidden="true"></i>
-                @endif
-            </div>
+        <div class="monogram" aria-hidden="true">
+            <span>{{ mb_substr($person['nickname'], 0, 1) }}</span>
         </div>
 
         <p class="eyebrow person-meta mb-2">Mempelai Wanita</p>

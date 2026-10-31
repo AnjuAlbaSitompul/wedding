@@ -217,10 +217,9 @@
             gsap.to(icon, { keyframes: { rotation: [0, -10, 8, -5, 0] }, duration: 0.9, delay: 0.4, ease: 'power1.inOut', scrollTrigger: once(icon) });
         });
 
-        const gallery = document.querySelector('.gallery-grid');
-        if (gallery) {
-            gsap.from(gallery.children, { scale: 0.9, opacity: 0, duration: 0.8, stagger: 0.1, ease: 'power2.out', scrollTrigger: once(gallery) });
-        }
+        gsap.utils.toArray('.monogram').forEach((monogram) => {
+            gsap.from(monogram, { scale: 0.6, rotation: -20, opacity: 0, duration: 1, delay: 0.2, ease: 'back.out(1.6)', scrollTrigger: once(monogram) });
+        });
 
         const closingFlora = document.querySelectorAll('.closing-flora img');
         if (closingFlora.length) {
